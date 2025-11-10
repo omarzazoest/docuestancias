@@ -21,7 +21,7 @@ SET @@SESSION.SQL_LOG_BIN= 0;
 -- GTID state at the beginning of the backup 
 --
 
-SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '09e0a804-b2f3-11f0-85d5-f4b52030119c:1-369';
+SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '09e0a804-b2f3-11f0-85d5-f4b52030119c:1-387';
 
 --
 -- Table structure for table `alumnos`
@@ -49,7 +49,7 @@ CREATE TABLE `alumnos` (
 
 LOCK TABLES `alumnos` WRITE;
 /*!40000 ALTER TABLE `alumnos` DISABLE KEYS */;
-INSERT INTO `alumnos` VALUES (1,'1323141370','Omar Esteban','MuñOz','Albarran','estomarma5@gmail.com','2491708337','Masculino');
+INSERT INTO `alumnos` VALUES (1,'1323141370','Omar Esteban','MuñOz','Albarran','estomarma5@gmail.com','2491708337','Femenino');
 /*!40000 ALTER TABLE `alumnos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -85,7 +85,7 @@ CREATE TABLE `cooperacion` (
   PRIMARY KEY (`id_cooperacion`),
   KEY `id_alumno` (`id_alumno`),
   CONSTRAINT `cooperacion_ibfk_1` FOREIGN KEY (`id_alumno`) REFERENCES `alumnos` (`id_alumno`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -94,7 +94,36 @@ CREATE TABLE `cooperacion` (
 
 LOCK TABLES `cooperacion` WRITE;
 /*!40000 ALTER TABLE `cooperacion` DISABLE KEYS */;
+INSERT INTO `cooperacion` VALUES (4,'Asadas','dsadsa','dsadsadsadsad','2025-11-07','2025-11-28','sadsadsadasdsadasdsa','asdsadsadasdda','sadsadsadsada','sadasdsadsad','asdsad','sadsadasdsad','asdadsadasdasd','asdsadsadsad',1,1,0,0,0,0,1);
 /*!40000 ALTER TABLE `cooperacion` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `docus`
+--
+
+DROP TABLE IF EXISTS `docus`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `docus` (
+  `id_conjdocus` int NOT NULL AUTO_INCREMENT,
+  `url_presentacion` varchar(255) DEFAULT NULL,
+  `url_cooperacion` varchar(255) DEFAULT NULL,
+  `url_termino` varchar(255) DEFAULT NULL,
+  `id_alumno` int NOT NULL,
+  PRIMARY KEY (`id_conjdocus`),
+  KEY `id_alumno` (`id_alumno`),
+  CONSTRAINT `docus_ibfk_1` FOREIGN KEY (`id_alumno`) REFERENCES `alumnos` (`id_alumno`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `docus`
+--
+
+LOCK TABLES `docus` WRITE;
+/*!40000 ALTER TABLE `docus` DISABLE KEYS */;
+/*!40000 ALTER TABLE `docus` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -121,7 +150,7 @@ CREATE TABLE `estancias` (
   CONSTRAINT `estancias_ibfk_1` FOREIGN KEY (`id_alumno`) REFERENCES `alumnos` (`id_alumno`),
   CONSTRAINT `estancias_ibfk_2` FOREIGN KEY (`id_empresa`) REFERENCES `organizaciones` (`id_organizacion`),
   CONSTRAINT `estancias_ibfk_3` FOREIGN KEY (`id_cooperacion`) REFERENCES `cooperacion` (`id_cooperacion`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -130,6 +159,7 @@ CREATE TABLE `estancias` (
 
 LOCK TABLES `estancias` WRITE;
 /*!40000 ALTER TABLE `estancias` DISABLE KEYS */;
+INSERT INTO `estancias` VALUES (6,'Estancia','1',120,1,2,'2025-11-09','2025-11-09',4);
 /*!40000 ALTER TABLE `estancias` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -176,4 +206,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-09 23:01:04
+-- Dump completed on 2025-11-10 14:57:16
