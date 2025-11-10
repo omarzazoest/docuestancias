@@ -550,40 +550,6 @@ $cartas_disponibles = verificarCartasDisponibles($datos_alumno, $form_data);
                 <h2>Gestión de Datos del Estudiante y Proyecto</h2>
                 <p class="text-muted">Administra tu información personal y detalles del proyecto de estancia.</p>
                 
-                <?php if ($datos_alumno): ?>
-                    <div class="alert alert-info" role="alert">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>Datos del estudiante encontrados:</strong><br>
-                        <small>
-                            ✓ Matrícula de sesión: <strong><?php echo htmlspecialchars($matricula); ?></strong><br>
-                            ✓ Matrícula en BD: <strong><?php echo htmlspecialchars($datos_alumno['matricula']); ?></strong><br>
-                            ✓ Nombre en BD: <strong><?php echo htmlspecialchars(trim(($datos_alumno['nombres'] ?? '') . ' ' . ($datos_alumno['paterno'] ?? '') . ' ' . ($datos_alumno['materno'] ?? ''))); ?></strong><br>
-                            ✓ Correo en BD: <strong><?php echo htmlspecialchars($datos_alumno['correo_electronico'] ?? 'No registrado'); ?></strong>
-                        </small>
-                    </div>
-                <?php else: ?>
-                    <div class="alert alert-warning" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <strong>Atención:</strong> No se encontraron datos para la matrícula de sesión: <strong><?php echo htmlspecialchars($matricula); ?></strong><br>
-                        <small>Verifica que tu matrícula esté registrada en la base de datos.</small>
-                    </div>
-                <?php endif; ?>
-                
-                        </small>
-                    </div>
-                
-                <!-- Información de Debug Temporal -->
-                <div class="alert alert-secondary" role="alert">
-                    <i class="fas fa-bug me-2"></i>
-                    <strong>Información de Debug:</strong><br>
-                    <small>
-                        • Matrícula en sesión: <code><?php echo htmlspecialchars($debug_info['matricula_sesion']); ?></code><br>
-                        • Datos de alumno encontrados: <span class="badge <?php echo $debug_info['datos_alumno_encontrados'] ? 'bg-success' : 'bg-danger'; ?>"><?php echo $debug_info['datos_alumno_encontrados'] ? 'SÍ' : 'NO'; ?></span><br>
-                        • Form data generado: <span class="badge <?php echo $debug_info['form_data_generado'] ? 'bg-success' : 'bg-danger'; ?>"><?php echo $debug_info['form_data_generado'] ? 'SÍ' : 'NO'; ?></span><br>
-                        • Total campos en form_data: <code><?php echo $debug_info['total_campos_form_data']; ?></code><br>
-                    </small>
-                </div>
-                
                 <?php if ($proyecto_cooperacion): ?>
                     <div class="alert alert-success" role="alert">
                         <i class="fas fa-check-circle me-2"></i>

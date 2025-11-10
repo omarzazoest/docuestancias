@@ -157,9 +157,6 @@ try {
                                 <span class="badge bg-danger ms-2">Pendiente</span>
                             <?php endif; ?>
                         </a>
-                        <a href="estancias.php" class="list-group-item list-group-item-action">
-                            <i class="fas fa-building me-2"></i>Mis Estancias
-                        </a>
                         <a href="documentos.php" class="list-group-item list-group-item-action">
                             <i class="fas fa-download me-2"></i>Documentos
                         </a>
@@ -399,25 +396,7 @@ try {
                                 </div>
                             </div>
 
-                            <div class="col-md-6 col-lg-3 mb-3">
-                                <div class="card text-center h-100">
-                                    <div class="card-body">
-                                        <i class="fas fa-award fa-3x <?php echo $pdfs_disponibles['constancia_estancia'] ? 'text-info' : 'text-muted'; ?> mb-3"></i>
-                                        <h6 class="card-title">Constancia de Estancia</h6>
-                                        <p class="card-text small">Certificado de participación</p>
-                                        <?php if ($pdfs_disponibles['constancia_estancia']): ?>
-                                            <button class="btn btn-info btn-sm" onclick="generarPDF('constancia')">
-                                                <i class="fas fa-download me-1"></i>Generar PDF
-                                            </button>
-                                        <?php else: ?>
-                                            <button class="btn btn-secondary btn-sm" disabled>
-                                                <i class="fas fa-lock me-1"></i>No disponible
-                                            </button>
-                                            <small class="text-muted d-block mt-1">Requiere estancia registrada</small>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                            </div>
+                            
                         </div>
 
                         <!-- Sección de Acciones Principales -->
@@ -473,16 +452,7 @@ try {
                                 </div>
                             </div>
 
-                            <div class="col-md-6 col-lg-3 mb-4">
-                                <div class="card text-center h-100">
-                                    <div class="card-body">
-                                        <i class="fas fa-user fa-3x text-warning mb-3"></i>
-                                        <h5 class="card-title">Mi Perfil</h5>
-                                        <p class="card-text">Actualiza tu información personal y de contacto.</p>
-                                        <button class="btn btn-warning" onclick="mostrarPerfil()">Ver Perfil</button>
-                                    </div>
-                                </div>
-                            </div>
+                            
                         </div>
                     </div>
 
