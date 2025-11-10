@@ -32,21 +32,64 @@ $paterno = $_SESSION['paterno'];
 $materno = $_SESSION['materno'];
 
 $pdfs_disponibles = $resumen['pdfs_disponibles'];
-// Recalcular disponibilidad basado en cooperacion real si existe (prioridad a flags actuales)
+// Sincronización: asegurar fila cooperacion existente y flags generados/enviados coherentes con archivos y parámetro ?sent
 try {
-    $stmtDashAl2 = $db->prepare('SELECT * FROM alumnos WHERE matricula = :mat LIMIT 1');
-    $stmtDashAl2->bindParam(':mat', $matricula); $stmtDashAl2->execute();
-    $alRow = $stmtDashAl2->fetch(PDO::FETCH_ASSOC);
+    $stmtAl = $db->prepare('SELECT * FROM alumnos WHERE matricula = :mat LIMIT 1');
+    $stmtAl->bindParam(':mat', $matricula); $stmtAl->execute();
+    $alRow = $stmtAl->fetch(PDO::FETCH_ASSOC);
     if ($alRow) {
-        $stmtCoFlags = $db->prepare('SELECT carta_presentacion_generada, carta_cooperacion_generada, carta_termino_generada, carta_presentacion_enviada, carta_cooperacion_enviada, carta_termino_enviada FROM cooperacion WHERE id_alumno = :ida LIMIT 1');
-        $stmtCoFlags->bindParam(':ida', $alRow['id_alumno']);
-        $stmtCoFlags->execute();
-        $flags = $stmtCoFlags->fetch(PDO::FETCH_ASSOC);
-        if ($flags) {
-            // Disponibilidad depende de datos, pero si ya generadas, mantener true
-            if (!empty($flags['carta_presentacion_generada'])) $pdfs_disponibles['carta_presentacion'] = true;
-            if (!empty($flags['carta_cooperacion_generada'])) $pdfs_disponibles['carta_cooperacion'] = true;
-            if (!empty($flags['carta_termino_generada'])) $pdfs_disponibles['carta_termino'] = true;
+        // cooperacion row
+    $stmtCo = $db->prepare('SELECT * FROM cooperacion WHERE id_alumno = :ida LIMIT 1');
+    $stmtCo->bindValue(':ida', $alRow['id_alumno']);
+        $stmtCo->execute();
+        $coDash = $stmtCo->fetch(PDO::FETCH_ASSOC);
+        if (!$coDash) {
+            $insMin = $db->prepare('INSERT INTO cooperacion (id_alumno) VALUES (:ida)');
+            $insMin->bindValue(':ida', $alRow['id_alumno']);
+            $insMin->execute();
+            $stmtCo->execute();
+            $coDash = $stmtCo->fetch(PDO::FETCH_ASSOC);
+        }
+
+        // docus row
+        $stmtDocs = $db->prepare('SELECT url_presentacion, url_cooperacion, url_termino FROM docus WHERE id_alumno = :ida LIMIT 1');
+        $stmtDocs->bindValue(':ida', $alRow['id_alumno']);
+        $stmtDocs->execute();
+        $docRow = $stmtDocs->fetch(PDO::FETCH_ASSOC) ?: [];
+
+        $updateParts = [];
+        $map = [
+            'presentacion' => ['gen' => 'carta_presentacion_generada', 'env' => 'carta_presentacion_enviada', 'col' => 'url_presentacion'],
+            'cooperacion'  => ['gen' => 'carta_cooperacion_generada',  'env' => 'carta_cooperacion_enviada',  'col' => 'url_cooperacion'],
+            'termino'      => ['gen' => 'carta_termino_generada',      'env' => 'carta_termino_enviada',      'col' => 'url_termino'],
+        ];
+
+        foreach ($map as $t => $info) {
+            $url = $docRow[$info['col']] ?? null;
+            if (!$url) {
+                $candidate = 'storage/pdfs/' . rawurlencode($matricula) . '/' . $t . '.pdf';
+                if (is_file(__DIR__ . '/../' . $candidate)) { $url = $candidate; }
+            }
+            // marcar generada si hay archivo y flag en 0
+            if ($url && empty($coDash[$info['gen']])) { $updateParts[] = $info['gen'] . ' = 1'; $coDash[$info['gen']] = 1; }
+        }
+
+        // manejo de parámetro ?sent=tipo para mostrar alerta y marcar enviado
+        $sentTipo = isset($_GET['sent']) ? strtolower(trim($_GET['sent'])) : '';
+        if ($sentTipo && isset($map[$sentTipo])) {
+            $envFlag = $map[$sentTipo]['env'];
+            if (empty($coDash[$envFlag])) { $updateParts[] = $envFlag . ' = 1'; $coDash[$envFlag] = 1; }
+        }
+
+        if ($updateParts) {
+            $sqlU = 'UPDATE cooperacion SET ' . implode(', ', $updateParts) . ' WHERE id_cooperacion = :idc';
+            $u = $db->prepare($sqlU); $u->bindValue(':idc', $coDash['id_cooperacion']); $u->execute();
+        }
+
+        // actualizar disponibilidad de cartas
+        foreach (['presentacion','cooperacion','termino'] as $t) {
+            $flagGen = $map[$t]['gen'];
+            if (!empty($coDash[$flagGen])) { $pdfs_disponibles['carta_'.$t] = true; }
         }
     }
 } catch (Exception $e) { /* silencioso */ }
@@ -133,28 +176,15 @@ try {
                         <div class="row mb-4">
                             <div class="col-12">
                                 <h2>Bienvenido, <?php echo htmlspecialchars($nombres . ' ' . $paterno . ' ' . $materno); ?></h2>
+                                <?php if (!empty($_GET['sent']) && in_array($_GET['sent'], ['presentacion','cooperacion','termino'], true)): ?>
+                                    <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                                        <i class="fas fa-check-circle me-1"></i> Carta de <strong><?php echo htmlspecialchars(ucfirst($_GET['sent'])); ?></strong> enviada correctamente.
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                <?php endif; ?>
                                 <p class="text-muted">Matrícula: <?php echo htmlspecialchars($matricula); ?></p>
                                 
-                                <!-- Barra de progreso del perfil -->
-                                <div class="card mb-3">
-                                    <div class="card-body">
-                                        <h6 class="card-title">Completado del Perfil</h6>
-                                        <div class="progress mb-2" style="height: 25px;">
-                                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                                                 role="progressbar" style="width: <?php echo $resumen['perfil_completo']; ?>%"
-                                                 aria-valuenow="<?php echo $resumen['perfil_completo']; ?>" aria-valuemin="0" aria-valuemax="100">
-                                                <?php echo $resumen['perfil_completo']; ?>%
-                                            </div>
-                                        </div>
-                                        <small class="text-muted">
-                                            <?php if ($resumen['perfil_completo'] < 100): ?>
-                                                Completa tu información para habilitar la generación de documentos
-                                            <?php else: ?>
-                                                ¡Perfil completo! Ya puedes generar todos los documentos
-                                            <?php endif; ?>
-                                        </small>
-                                    </div>
-                                </div>
+                                
                             </div>
                         </div>
 
@@ -175,10 +205,10 @@ try {
                                 $stmtDashAl->bindParam(':mat', $matricula); $stmtDashAl->execute();
                                 $alDash = $stmtDashAl->fetch(PDO::FETCH_ASSOC) ?: [];
                                 $stmtDashCo = $db->prepare('SELECT * FROM cooperacion WHERE id_alumno = :ida LIMIT 1');
-                                $stmtDashCo->bindParam(':ida', $alDash['id_alumno'] ?? 0); $stmtDashCo->execute();
+                                $stmtDashCo->bindValue(':ida', $alDash['id_alumno'] ?? 0); $stmtDashCo->execute();
                                 $coDash = $stmtDashCo->fetch(PDO::FETCH_ASSOC) ?: [];
                                 $stmtDashEs = $db->prepare('SELECT o.* FROM estancias e LEFT JOIN organizaciones o ON e.id_empresa = o.id_organizacion WHERE e.id_alumno = :ida LIMIT 1');
-                                $stmtDashEs->bindParam(':ida', $alDash['id_alumno'] ?? 0); $stmtDashEs->execute();
+                                $stmtDashEs->bindValue(':ida', $alDash['id_alumno'] ?? 0); $stmtDashEs->execute();
                                 $orgDash = $stmtDashEs->fetch(PDO::FETCH_ASSOC) ?: [];
                                 $totalCampos = count($camposClave);
                                 foreach ($camposClave as $c) {
