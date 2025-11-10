@@ -1,0 +1,179 @@
+-- MySQL dump 10.13  Distrib 8.0.18, for Win64 (x86_64)
+--
+-- Host: 127.0.0.1    Database: docsestancias
+-- ------------------------------------------------------
+-- Server version	9.5.0
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+SET @MYSQLDUMP_TEMP_LOG_BIN = @@SESSION.SQL_LOG_BIN;
+SET @@SESSION.SQL_LOG_BIN= 0;
+
+--
+-- GTID state at the beginning of the backup 
+--
+
+SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '09e0a804-b2f3-11f0-85d5-f4b52030119c:1-369';
+
+--
+-- Table structure for table `alumnos`
+--
+
+DROP TABLE IF EXISTS `alumnos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `alumnos` (
+  `id_alumno` int NOT NULL AUTO_INCREMENT,
+  `matricula` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `nombres` varchar(50) DEFAULT NULL,
+  `paterno` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `materno` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `correo_electronico` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `telefono` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `genero` enum('Masculino','Femenino') DEFAULT NULL,
+  PRIMARY KEY (`id_alumno`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `alumnos`
+--
+
+LOCK TABLES `alumnos` WRITE;
+/*!40000 ALTER TABLE `alumnos` DISABLE KEYS */;
+INSERT INTO `alumnos` VALUES (1,'1323141370','Omar Esteban','MuñOz','Albarran','estomarma5@gmail.com','2491708337','Masculino');
+/*!40000 ALTER TABLE `alumnos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cooperacion`
+--
+
+DROP TABLE IF EXISTS `cooperacion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cooperacion` (
+  `id_cooperacion` int NOT NULL AUTO_INCREMENT,
+  `nombre_proyecto` varchar(55) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `objetivos` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `area-departamento` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `periodo_inicial` date DEFAULT NULL,
+  `periodo_final` date DEFAULT NULL,
+  `act_1` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `act_2` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `act_3` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `act_4` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `meta_1` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `meta_2` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `meta_3` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `meta_4` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `carta_presentacion_generada` tinyint(1) DEFAULT '0',
+  `carta_cooperacion_generada` tinyint(1) DEFAULT '0',
+  `carta_termino_generada` tinyint(1) DEFAULT '0',
+  `carta_presentacion_enviada` tinyint(1) DEFAULT '0',
+  `carta_cooperacion_enviada` tinyint(1) DEFAULT '0',
+  `carta_termino_enviada` tinyint(1) DEFAULT '0',
+  `id_alumno` int DEFAULT NULL,
+  PRIMARY KEY (`id_cooperacion`),
+  KEY `id_alumno` (`id_alumno`),
+  CONSTRAINT `cooperacion_ibfk_1` FOREIGN KEY (`id_alumno`) REFERENCES `alumnos` (`id_alumno`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cooperacion`
+--
+
+LOCK TABLES `cooperacion` WRITE;
+/*!40000 ALTER TABLE `cooperacion` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cooperacion` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `estancias`
+--
+
+DROP TABLE IF EXISTS `estancias`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `estancias` (
+  `id_estancia_estadia` int NOT NULL AUTO_INCREMENT,
+  `estancia-estadia` enum('Estancia','Estadia') DEFAULT NULL,
+  `numero` enum('N/A','1','2') DEFAULT NULL,
+  `horas` int DEFAULT NULL,
+  `id_alumno` int NOT NULL,
+  `id_empresa` int DEFAULT NULL,
+  `fecha_presentacion` date DEFAULT NULL,
+  `fecha_termino` date DEFAULT NULL,
+  `id_cooperacion` int DEFAULT NULL,
+  PRIMARY KEY (`id_estancia_estadia`),
+  KEY `id_alumno` (`id_alumno`),
+  KEY `id_empresa` (`id_empresa`),
+  KEY `id_cooperacion` (`id_cooperacion`),
+  CONSTRAINT `estancias_ibfk_1` FOREIGN KEY (`id_alumno`) REFERENCES `alumnos` (`id_alumno`),
+  CONSTRAINT `estancias_ibfk_2` FOREIGN KEY (`id_empresa`) REFERENCES `organizaciones` (`id_organizacion`),
+  CONSTRAINT `estancias_ibfk_3` FOREIGN KEY (`id_cooperacion`) REFERENCES `cooperacion` (`id_cooperacion`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `estancias`
+--
+
+LOCK TABLES `estancias` WRITE;
+/*!40000 ALTER TABLE `estancias` DISABLE KEYS */;
+/*!40000 ALTER TABLE `estancias` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `organizaciones`
+--
+
+DROP TABLE IF EXISTS `organizaciones`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `organizaciones` (
+  `id_organizacion` int NOT NULL AUTO_INCREMENT,
+  `nombre_organizacion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `contacto_org_congrado` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `puesto_contacto` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `email_org` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `telefono_org` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `direccion_org` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  PRIMARY KEY (`id_organizacion`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `organizaciones`
+--
+
+LOCK TABLES `organizaciones` WRITE;
+/*!40000 ALTER TABLE `organizaciones` DISABLE KEYS */;
+INSERT INTO `organizaciones` VALUES (2,'Tecnológica Innovadora S.A. de C.V.','FRANCISCO CASTRO VELAZQUEZ','DIRECTOR DE LA ORGANIZACION','estomarma5@gmail.com','2491708337','PRIVADA GUSTAVO BAZ PRADA 9 9');
+/*!40000 ALTER TABLE `organizaciones` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'docsestancias'
+--
+SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-11-09 23:01:04
